@@ -1,5 +1,7 @@
 import requests
 import unittest
+from unittest.mock import Mock
+from unittest.mock import patch
 
 def getGitHubInfo(user):
     profile = f'https://api.github.com/users/{user}/repos'
@@ -17,10 +19,24 @@ def getGitHubInfo(user):
     return repoInfo
     
 
+
 class testAPI(unittest.TestCase):
-    def test_API(self):
-        self.assertEqual(getGitHubInfo("test-user-92929"),("Repo: test-repository, Number of commits: 3"))
-        self.assertEqual(getGitHubInfo("cat"),("Repo: cat.github.io, Number of commits: 26"))
+
+    @patch('requests.get')
+    def test_API(self, mock_get):
+
+        mock_get.side_effect = [Mock(json=Mock(return_value=[{'name': 'test-repository'}])),Mock(json=Mock(return_value=[
+                {'a': 'b'},
+                {'a': 'c'},
+                {'a': 'd'}
+            ]))
+        ]
+
+        result = getGitHubInfo("test-user-92929")
+
+        self.assertEqual(result,("Repo: test-repository, Number of commits: 3"))
+
+        self.assertEqual(mock_get.call_count, 2)
 
 
 if __name__ == '__main__':
