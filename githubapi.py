@@ -16,7 +16,6 @@ def getGitHubInfo(user):
     print(repoInfo)
     return repoInfo
     
-getGitHubInfo("cat")    
 
 class testAPI(unittest.TestCase):
     def test_API(self):
